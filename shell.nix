@@ -21,6 +21,10 @@ let
     });
     dependencies = with pkgs; [
       dotnet-combined
+    ] ++ [
+      (pkgs.python3.withPackages (python-pkgs: [
+        python-pkgs.requests
+      ]))
     ];
 
 in mkShell {
