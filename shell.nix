@@ -1,8 +1,4 @@
-{ pkgs ? (let lock = builtins.fromJSON (builtins.readFile ./flake.lock);
-in import (builtins.fetchTarball {
-  url = "https://github.com/NixOS/nixpkgs/archive/${lock.nodes.nixpkgs.locked.rev}.tar.gz";
-  sha256 = lock.nodes.nixpkgs.locked.narHash;
-}) { config.allowUnfree = true; }) }:
+{ pkgs ? import <nixpkgs> { config.allowUnfree = true; } }:
 with pkgs;
 let
     dotnet-combined = (with dotnetCorePackages; combinePackages [
@@ -30,12 +26,13 @@ let
 in mkShell {
   name = "replicator devshell";
   packages = dependencies;
-  buildInputs = [ pkgs.cargo pkgs.rustc ];
+  buildInputs = with pkgs; [ cargo rustc rustfmt rustPackages.clippy lld_19 llvm_19 rustup];
+  RUST_BACKTRACE = 1;
   shellHook = ''
     export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath dependencies}
     export PATH="/home/ben/.npm-global/bin:/home/ben/.npm-global:$PATH"
     export PATH="/home/ben/.cargo/bin:$PATH"
     echo "rust binaries on path"
   '';
-  env.DOTNET_ROOT = "${dotnet-combined}";
+  DOTNET_ROOT = "${dotnet-combined}";
 }
