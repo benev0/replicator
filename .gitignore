@@ -1,1 +1,12 @@
-servers/*
+# Nix & devenv
+result
+.env
+.env.*
+.devenv*
+.direnv*
+/.cache
+/.pre-commit-config.yaml
+man
+
+# Rust
+target
