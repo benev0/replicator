@@ -7,15 +7,13 @@ import requests
 
 validArgs = ["-u", "-f"]
 
-def format_dirname(dir: str):
-        if dir.startswith('./'):
-                return dir[2:]
-        return dir[:]
+def format_dirname(dir: str) -> bool:
+        return dir.isalnum()
 
 def init_schema(url: str = "", dir: str = "") -> None:
-        format_dirname(dir)
         assert dir, "directory name, dir, should not be lambda"
         assert url, "url should not be lambda"
+        assert format_dirname(dir)
 
         ### Acquire schema
         r = requests.get(url)
@@ -44,7 +42,56 @@ def init_schema(url: str = "", dir: str = "") -> None:
 
 
 def build_db(dir: str) -> None:
-        subprocess.run(["spacetime", "init", "--lang", "rust", "server"])
+        # INIT SERVER
+        subprocess.run(["spacetime", "init", "--lang", "rust", f"./servers/{dir}/server"])
+
+        # unneeded due to over wright; open in "w" mode
+        # subprocess.run(["rm", f"servers/{dir}/server/src/lib.rs"])
+
+        # WRIGHT SERVER
+        with open(f"./servers/{dir}/server/src/lib.rs", "w") as f:
+                pass
+                ## server logic generator
+
+        # PUBLISH
+        subprocess.run(["spacetime", "publish", "--project-path", f"./servers/{dir}/server", f"{dir}"])
+
+        ## INIT CLIENT
+        subprocess.run(["cargo", "new", "./servers/{dir}/client"])
+
+        ## ADD CARGO DEPS
+        with open(f"./servers/{dir}/client/Cargo.toml", "a+") as f:
+                f.write("spacetimedb-sdk = \"0.7\"\n")
+                f.write("hex = \"0.4\"\n")
+
+        ## client logic generator
+        with open(f"./servers/{dir}/client/src/lib.rs", "w") as f:
+                pass
+
+                ## bindings import
+                f.write("mod module_bindings;\n")
+                f.write("use module_bindings::*;\n")
+
+                f.writelines(
+                        [
+                                "fn register_callbacks() {",
+                                "    once_on_connect(on_connected);",
+                                "    on_subscription_applied(on_sub_applied);",
+                                "    on_disconnect(on_disconnected);",
+                                "}"
+                        ]
+                )
+
+        ## AUTO-GEN BINDINGS
+        try:
+                os.makedirs(f"./servers/{dir}/client/module_bindings")
+        except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isdir(file):
+                        print("dir already exists")
+                        sys.exit(1)
+
+        subprocess.run(["spacetime", "generate", "--lang", "rust", "--out-dir", "client/src/module_bindings", "--project-path", f"./servers/{dir}/server"])
+
 
 
 
