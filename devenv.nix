@@ -5,12 +5,12 @@ let
         pname = "SpacetimeDB";
         version = "v1.0.0";
 
-        # todo: spec rustc version & required extensions here:
+        # todo: spec rustc explicitly & required extensions
 
         nativeBuildInputs = [
-            pkgs-unstable.perl  # needed for openssl build
-            pkgs.git            # needed for cli build script
-            pkgs-unstable.llvmPackages.lld
+            pkgs-unstable.perl              # needed for openssl build
+            pkgs.git                        # needed for cli build script
+            pkgs-unstable.llvmPackages.lld  # no clue why the linker is needed as a dev input
         ];
 
         useFetchCargoVendor = true;
@@ -18,11 +18,10 @@ let
         src = pkgs-unstable.fetchFromGitHub {
             owner = "clockworklabs";
             repo = pname;
-            # rev = "01c391f8a9cf6d2cdc4272237348019adb434d38";             # latest does not pass tests. so it crashes!? :(
             rev = version;
-            hash = "sha256-jfkyTznQPTJyeI6YXcvVsNP35g0svoeiqflCmh5IWV0=";   # this was right for latest not sure why it did not fail on change
+            hash = "sha256-L3D7DfMQNuoZ/twAsrK20royIGp6PXCAFZKnb0PgSu0=";
         };
-        cargoHash = "sha256-tXhiS6fD89AUim9QjbV6RObu0VjAZKI3t9lsomp1koU=";
+        cargoHash = "sha256-eOZRp3LRbQzHfT+evKY55ifevX+ki9oT5B7vZs3ym+c=";
     };
 in
 {

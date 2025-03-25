@@ -88,10 +88,10 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1742707865,
+        "lastModified": 1742738698,
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "dd613136ee91f67e5dba3f3f41ac99ae89c5406b",
+        "rev": "f3a2a0601e9669a6e38af25b46ce6c4563bcb6da",
         "type": "github"
       },
       "original": {
@@ -134,10 +134,10 @@
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1742666181,
+        "lastModified": 1742799654,
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "3bf18d4ebaabb03435fefd5fe6a82d52d67b98d6",
+        "rev": "dd2354c9855c2b73abaa9ec56b10d45526f6ed5e",
         "type": "github"
       },
       "original": {
